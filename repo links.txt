@@ -1,0 +1,13 @@
+repo links:
+-----------
+
+https://github.com/jordanpotti/ccdc -> knowledge-sharing
+
+https://github.com/lchack/CCDC -> resources
+
+https://github.com/Ohelig/ccdcfiles -> good repo of resources
+
+https://github.com/JaminB/CCDC -> assorted
+
+
+That stupid redteam script for SysInt process killer -> https://github.com/obscuresec/CCDC/blob/master/Invoke-ProcessLock

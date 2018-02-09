@@ -1,0 +1,141 @@
+
+BENCHMARKS:
+https://www.reddit.com/r/sysadmin/comments/2jqbqp/windows_7_and_server_2012_hardening_guides/
+https://iase.disa.mil/stigs/Pages/index.aspx
+
+https://technet.microsoft.com/en-us/library/bb490939.aspx
+
+
+CCDC 2018
+-join 2012 server to the domain team.local
+*Set the system date/time and configure it to synchronize against AD time servers.
+*Verify NTP on Domain Controller -> +/- 5 min will break things relying on kerberos
+*DC has to be set correctly for me to join
+*before passwords change on the DC
+-request for user account mmagnus created on AD
+-download and run Microsoft security tools on Server 2012
+	*mbsacli.exe -> MBSA
+https://msdn.microsoft.com/en-us/library/ff647642.aspx
+*Security Configuration Wizard and others on this site,
+*SCW template for GPO?  https://technet.microsoft.com/en-us/security/jj720323.aspx
+*Security Compliance Manager
+https://technet.microsoft.com/en-in/solutionaccelerators/cc835245.aspx
+https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/hh831360(v=ws.11)
+
+-Make sure UAC is on -> 2012/2008/7
+-Disable or uninstall unused services.
+*how to tell?
+-Disable or delete unused users.
+*"We also should have requested that a list of the (fictitious) current staff and chain of command be provided to us."
+-Configure file system permissions.
+-Configure registry permissions.
+-Disallow remote registry access if not required.
+-If RDP is utilized, set RDP connection encryption level to high.  Make sure to restrict RDP access to local VPNgroup and local campus management subnets.  Do not allow RDP to be available to the Internet at large.
+-Production servers should have a static IP so clients can reliably find them.
+
+
+net view /all
+C:\> for /L %I in (1,1,254) do ping -w 30 -n 1 172.20.241.%I | find "Reply" >> pingscan.txt
+https://stackoverflow.com/questions/13713318/ping-all-addresses-in-network-windows
+
+Checklists:
+	https://security.utexas.edu/os-hardening-checklist/windows-r2
+IIS Checklist:
+	http://www.nsi.bg/nrnm/Help/iisHelp/iis/htm/core/iisckl.htm
+	http://resources.infosecinstitute.com/securing-iis-server-checklists-2/
+Hardening 2012
+	https://technet.microsoft.com/en-us/security/jj720323.aspx
+
+Security auditing (MSFT)
+	https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/dn319078%28v%3dws.11%29
+
+
+IIS MANAGEMENT AND ADMIN DOCS
+IIS lockdown?
+	https://support.microsoft.com/en-us/help/325864/how-to-install-and-use-the-iis-lockdown-wizard
+	https://support.microsoft.com/en-us/help/282060
+	https://docs.microsoft.com/en-us/iis/manage/provisioning-and-managing-iis/iis-management-and-administration
+IIS Overview
+	https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/hh831725%28v%3dws.11%29
+UrlScan was an extension that functioned as a security tool for restricting HTTP requests -> configure it?
+This article, hardening -> https://www.upguard.com/articles/10-steps-for-improving-iis-security -> 8 and 9
+5. Use Dynamic IP Restrictions
+	Dynamic IP address restrictions use a requestor's IP addresses and domain name to determine whether or not to restrict access. This is essentially a whitelist-"allowUnlisted"-that IIS uses to prevent unauthorized access. So in the event of Denial of Service (DoS) and brute force attacks, IIS' Dynamic IP Restrictions (DIPR) module can temporarily block IP addresses making unusual requests.
+	https://www.acunetix.com/blog/articles/8-tips-secure-iis-installation/
+IIS -> 8.0.9200.16384
+SSH, RDP, SMB
+Hardening
+http://resources.infosecinstitute.com/hardening-iis-security/
+https://serverfault.com/questions/761273/setting-up-iis-8-5-security-practices
+
+SMB hardening?
+https://www.saotn.org/3-important-security-measurements-windows-server-iis/
+also mentions SSL, SMBv1
+
+OpenERP 6.0 running on Server2012 -> IIS v 
+	https://doc.odoo.com/5.0/install/linux/web/
+	server.socket_port change from 8080
+	I don't think there's a DB here either, crap.
+	https://doc.odoo.com/7.0/install/windows/postgres/
+	https://www.odoo.com/forum/help-1/question/is-there-is-a-way-to-configure-openerp-with-iis-server-14143
+	https://stackoverflow.com/questions/42180750/a-odoo-server-and-a-iis-server-are-running-on-the-same-machine-how-can-i-point-a
+
+
+
+SECURITY BASELINES?
+https://technet.microsoft.com/en-us/library/jj898542.aspx
+https://technet.microsoft.com/en-us/library/gg236605.aspx
+https://technet.microsoft.com/en-us/library/cc163140.aspx
+https://technet.microsoft.com/en-us/library/ee712767.aspx
+
+
+
+9. Hide important files and backups
+
+Sometimes there is little to no choice one weather to backup to the same local disk or to write that important file to local disk. However, try your best to obfuscate what the files really are by placing them in a different directory or giving them an obscure file name. The red team is somewhat lazy in this regard and are not going to start opening every file on the system to find your logs or backup configs. However, it you just add .old or .bak to the end of that configuration file, don't be surprised if its gone the next time you have to restore it because of an attack.
+
+We too discovered that it's better to scrub a box early in the competition then fight with it for hours. We also found great value in setting up centralized logging and automated log checking packages like Kiwi and OSSEC.
+
+Ooh, good idea:
+Random password lists are also valuable. We printed out several identical pages for each team member, each with long, random passwords, generated in such a way as to avoid ambiguous letters/numbers/symbols. Each password was numbered, for example, one to one hundred, and a blank line next to the password was meant for name of the server and the username it was associated with. Once a password was changed or a new account was created, the server name, username and number would be called aloud, and the team would write that information on the correspondingly numbered line for reference. In this way we were not forced into weak passwords or password reuse. The passwords would be rotated periodically or when we realized there was a breach, and this was a key factor in keeping things organized.
+
+DO NOT TRUST THE DOCUMENTATION; ping scan to map network
+Looking back, one thing we did a poor job on that first day was mapping the network. We took the documentation at face value, and decided not to create our own network map and monitor for new hosts. Had we done what we had planned and created a network map, we would have avoided issues that came up later in the competition.
+
+In the end we split the team in two and devoted half of our efforts to injects and the other half to keeping up the machines that were still scoring us points.
+
+We had the technical skills to patch machines, dig through user accounts and map the network, we just did not have the proper plan in place. Instead we started running about in a disorderly fashion trying to keep things up and work around each other without a solid plan on how to tackle the challenges that came our way.
+
+
+https://technet.microsoft.com/en-us/library/cc754997.aspx
+https://technet.microsoft.com/en-us/library/cc677002.aspx
+
+Checklists:
+http://www.nsi.bg/nrnm/Help/iisHelp/iis/htm/core/iisckl.htm
+https://msdn.microsoft.com/en-us/library/ff648198.aspx -> checklist
+http://resources.infosecinstitute.com/securing-iis-server-checklists-2/
+
+Restrict logon FTP 2012 IIS
+https://docs.microsoft.com/en-us/iis/get-started/whats-new-in-iis-8/iis-80-ftp-logon-attempt-restrictions
+Sandboxing?
+https://docs.microsoft.com/en-us/iis/get-started/whats-new-in-iis-8/iis-80-cpu-throttling-sand-boxing-sites-and-applications
+
+for the OTRS
+https://docs.microsoft.com/en-us/iis/get-started/whats-new-in-iis-8/iis-80-aspnet-configuration-management
+https://docs.microsoft.com/en-us/iis/get-started/whats-new-in-iis-8/iis-80-application-initialization
+
+OTRS -> https://www.otrs.com/release-notes-otrs-help-desk-4-beta1/attachmentname-agent-interface/
+*this database needs to be installed and set up
+http://doc.otrs.com/doc/manual/admin/4.0/en/html/otrs.html
+
+LINUX DNS:
+http://www.linuxhomenetworking.com/wiki/index.php/Quick_HOWTO_:_Ch18_:_Configuring_DNS
+
+To Test:
+
+LOOK AT:
+BIND -> DNS client, /etc/resolv.conf on linux client
+
+Avoiding manual server hardening
+https://blogs.technet.microsoft.com/mspfe/2014/05/29/why-you-should-avoid-manual-server-hardening/
+
